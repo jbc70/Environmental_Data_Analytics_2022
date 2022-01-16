@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: Jack Carpenter
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -23,20 +23,21 @@ The completed exercise is due on <>.
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
 > Answer: 
+In undergrad I had a single lecture in a seminar class with an associated week-long assignment to play with R and Rstudio. Honestly, this thrown-in-the-pool approach kinda scared me off of using it until taking this class. After that, a supervisor in an internship made some plots with me for a project, but I didn't really learn how to do it. This past semester the TA in another class taught some R on-the-fly for data analysis so I saw quite a lot coding to transform and analyze data into plots, but did not practice a lot with it since for most assignments we used excel.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel confident that I can learn everything on the syllabus given enough time to figure it out and someone to ask questions of.  
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: Some of the more statistics-related things (like ANOVA) I'm a little apprehensive about because I haven't done them in a while, and never using R, but I have a feeling that they'll make sense once we get into them.
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/jbc70/Environmental_Data_Analytics_2022
 
 
