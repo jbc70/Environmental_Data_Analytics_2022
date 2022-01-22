@@ -32,15 +32,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 
 ```{r}
 #1. 
-#create a sequence from 1:100 by 4s
+#create a sequence from 1 to 100 by 4s
 seq(1,100,4)
 #name the sequence
 fours_sequence <- seq(1,100,4)
 fours_sequence
+
 #2. 
 #run median and mean of fours_sequence
 median(fours_sequence)
 mean(fours_sequence)
+
 #3. 
 #compare the mean and median values - is mean or median greater?
 mean(fours_sequence)>median(fours_sequence)
@@ -58,6 +60,7 @@ mean(fours_sequence)>median(fours_sequence)
 8. Label the columns of your data frame with informative titles.
 
 ```{r}
+#5-8.
 #create a vector with student names
 student_name<- c("Ted", "Beard", "Keeley", "Roy")
 student_name
@@ -77,16 +80,38 @@ class(student_scores)
 
 9. QUESTION: How is this data frame different from a matrix?
 
-> Answer: I don't know, what's a matrix? 
+> Answer: Matrices need to have all the same type of data (eg. all numbers or all names) whereas data frames can have multiple types of data (eg. names, dates, and numbers) in the same table. 
 
 10. Create a function with an if/else statement. Your function should determine whether a test score is a passing grade of 50 or above (TRUE or FALSE). You will need to choose either the `if` and `else` statements or the `ifelse` statement. Hint: Use `print`, not `return`. The name of your function should be informative.
 
 11. Apply your function to the vector with test scores that you created in number 5. 
 
 ```{r}
+#10.
+#trying to create a function named passinggrade with a true/false output
+passing_grade <- function(x) {
+  if(x > 50) {
+    TRUE
+    }
+  else {
+    FALSE
+  }
+}
+passinggrade <- function(x) {
+  ifelse(x>50, TRUE, FALSE)
+}
+#I like this version better - its shorter and cleaner
 
+#11.
+#passinggrade(test_score)
+#this function works, but only with individual values 
+#how do I get it to read the whole vector? 
+passinggrade(student_scores[,"test_score"])
+#ok there we go, have to name the dataframe AND the vector not just the vector
+#I think I understand, it has to be specified where to look for the data
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
 > Answer: 
+Both options work as long as they're worded correctly. The 'if' and 'else' combination works, but is much easier to make a mistake in because there are more sections and pieces to it. The 'ifelse' function works the same way - it reads the same basic test - but is cleaner and easier for small tests like this.
