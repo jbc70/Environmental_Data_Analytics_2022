@@ -109,6 +109,7 @@ passinggrade <- function(x) {
 passinggrade(student_scores[,"test_score"])
 #ok there we go, have to name the dataframe AND the vector not just the vector
 #I think I understand, it has to be specified where to look for the data
+print(passinggrade(student_scores[,"test_score"]))
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
