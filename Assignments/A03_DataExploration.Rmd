@@ -24,8 +24,8 @@ The completed exercise is due on <>.
 1. Check your working directory, load necessary packages (tidyverse), and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. **Be sure to add the `stringsAsFactors = TRUE` parameter to the function when reading in the CSV files.**
 ```{r,  message = FALSE}
 getwd()
-#setwd("/Users/Jack/Documents/Duke/Spring 2022/Environmental Data Analytics/Environmental_Data_Analytics_2022/")
-#getwd()
+setwd("/Users/Jack/Documents/Duke/Spring 2022/Environmental Data Analytics/Environmental_Data_Analytics_2022/")
+getwd()
 
 library(tidyverse)
 
@@ -59,13 +59,13 @@ Litter <- read.csv("../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", stri
 
 ```{r}
 dim(Neonics)
-print(dim(Neonics))
+
 ```
 
 6. Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?
 ```{r}
 summary(Neonics$Effect)
-print(summary(Neonics$Effect)) 
+
 ```
 
 > Answer: The most common effects studied are population and mortality. These effects are indicative of how strong/deadly an insecticide is and how well it kills insects compared to other behavioural changes.
@@ -74,7 +74,7 @@ print(summary(Neonics$Effect))
 
 ```{r}
 summary(Neonics$Species.Common.Name)
-print(summary(Neonics$Species.Common.Name))
+
 ```
 
 > Answer: The 6 most common species are honey bee, parasitic wasp, buff tailed bumblebee, carniolan honey bee, bumble bee, and italian honeybee. 5 of these 6 species are pollinators and decimating pollinator populations is bad for everyone. The other, parasitic wasp, is potentially a predatory control species that may also benefit agriculture by limiting pest populations. In short, all 6 top species are "farmers' friend" species.   
@@ -83,7 +83,7 @@ print(summary(Neonics$Species.Common.Name))
 
 ```{r}
 class(Neonics$Conc.1..Author.)
-print(class(Neonics$Conc.1..Author.))
+
 ```
 
 > Answer: The class of 'Conc.1..Author" is factor instead of numeric because there are several entries that are "NR" instead of numerical entries. As a result, R cannot read the whole column as numerical because some of the data is not entered as a number. 
@@ -98,16 +98,14 @@ ggplot(Neonics) +
   geom_freqpoly(aes(x = Publication.Year), bins = 40)
 #how do I decide how many bins to use?
 #I went with 40 because there is nearly 40 years' worth of data
-print(ggplot(Neonics) +
-  geom_freqpoly(aes(x = Publication.Year), bins = 40))
+
 ```
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 ```{r}
 ggplot(Neonics) +
   geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 40)
-print(ggplot(Neonics) +
-  geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 40))
+
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
@@ -122,9 +120,7 @@ Interpret this graph. What are the most common test locations, and do they diffe
 #commmented out because we don't need bins with this one
 ggplot(Neonics) +
   geom_bar(aes(x = Endpoint))
-
-print(ggplot(Neonics) +
-  geom_bar(aes(x = Endpoint)))  
+ 
 ```
 
 > Answer: The two most common end points are NOEL and LOEL, respectively 'no observable effect level' and 'low observable effect level'. NOEL means that no statistically significant impacts were observed at the highest dose level, where LOEL means that statistically significant impacts were observed at the lowest dose level. Effectively, the two most common endpoints are opposite reactions. 
@@ -162,8 +158,6 @@ summary(Litter$siteID)
 ggplot(Litter) +
   geom_bar(aes(x = functionalGroup))
 
-print(ggplot(Litter) +
-  geom_bar(aes(x = functionalGroup)))
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup. 
