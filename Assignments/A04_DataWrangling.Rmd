@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Jack Carpenter"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -24,9 +24,38 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
-#1
+#1 Check working directory, load packages, and upload EPA data files.
+getwd()
 
-#2
+#install.packages(tidyverse)
+#install.packages(lubridate)
+
+library(tidyverse)
+library(lubridate)
+
+EPAair_03_NC2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPAair_03_NC2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+EPAair_PM25_NC2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPAair_PM25_NC2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
+#why does read.csv work with stringsAsFactors, but read_csv does not? 
+
+#2 Let's look at the datasets now.
+dim(EPAair_03_NC2018)
+colnames(EPAair_03_NC2018)
+str(EPAair_03_NC2018)
+
+dim(EPAair_03_NC2019)
+colnames(EPAair_PM25_NC2019)
+str(EPAair_03_NC2019)
+
+dim(EPAair_PM25_NC2018)
+colnames(EPAair_PM25_NC2018)
+str(EPAair_PM25_NC2018)
+
+dim(EPAair_PM25_NC2019)
+colnames(EPAair_PM25_NC2019)
+str(EPAair_PM25_NC2019)
+
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -36,9 +65,22 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3 Change dates from factors to dates
+EPAair_03_NC2018$Date <- as.Date(EPAair_03_NC2018$Date, format = "%m/%d/%Y")
+EPAair_03_NC2019$Date <- as.Date(EPAair_03_NC2019$Date, format = "%m/%d/%Y")
+EPAair_PM25_NC2018$Date <- as.Date(EPAair_PM25_NC2018$Date, format = "%d/%m/%Y")
+EPAair_PM25_NC2019$Date <- as.Date(EPAair_PM25_NC2019$Date, format = "%d/%m/%Y")
 
-#4
+class(EPAair_03_NC2018$Date)
+class(EPAair_03_NC2019$Date)
+class(EPAair_PM25_NC2018$Date)
+class(EPAair_PM25_NC2019$Date)
+
+#4 Select columns
+EPAair_03_NC2018_selected <- select(EPAair_03_NC2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAair_03_NC2019_selected <- select(EPAair_03_NC2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAair_PM25_NC2018_selected <- select(EPAair_PM25_NC2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAair_PM25_NC2019_selected <- select(EPAair_PM25_NC2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #5
 
