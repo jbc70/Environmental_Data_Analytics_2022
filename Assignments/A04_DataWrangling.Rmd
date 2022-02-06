@@ -153,10 +153,15 @@ write.csv(EPAair_03_PM25_NC2018_NC2019_combined_spread, row.names = FALSE, file 
 
 ```{r}
 #12(a,b)
+EPAair_summary <- EPAair_03_PM25_NC2018_NC2019_combined_spread %>%
+  group_by(Site.Name, Month, Year) %>%
+  summarise(mean_03 = mean(Ozone),
+            mean_PM25 = mean(PM2.5))
+  #filter(!(is.na(Ozone) & is.na(PM2.5)))
+  
 
-
-#13
-
+#13 Dimensions
+dim(EPAair_summary)
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
