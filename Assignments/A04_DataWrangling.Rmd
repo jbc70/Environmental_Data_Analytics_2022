@@ -3,6 +3,8 @@ title: "Assignment 4: Data Wrangling"
 author: "Jack Carpenter"
 output: pdf_document
 geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## OVERVIEW
@@ -66,10 +68,10 @@ str(EPAair_PM25_NC2019)
 
 ```{r}
 #3 Change dates from factors to dates
-EPAair_03_NC2018$Date <- as.Date(EPAair_03_NC2018$Date, format = "%m/%d/%Y")
-EPAair_03_NC2019$Date <- as.Date(EPAair_03_NC2019$Date, format = "%m/%d/%Y")
-EPAair_PM25_NC2018$Date <- as.Date(EPAair_PM25_NC2018$Date, format = "%d/%m/%Y")
-EPAair_PM25_NC2019$Date <- as.Date(EPAair_PM25_NC2019$Date, format = "%d/%m/%Y")
+EPAair_03_NC2018$Date <- mdy(EPAair_03_NC2018$Date)
+EPAair_03_NC2019$Date <- mdy(EPAair_03_NC2019$Date)
+EPAair_PM25_NC2018$Date <- mdy(EPAair_PM25_NC2018$Date)
+EPAair_PM25_NC2019$Date <- mdy(EPAair_PM25_NC2019$Date)
 
 class(EPAair_03_NC2018$Date)
 class(EPAair_03_NC2019$Date)
@@ -82,10 +84,17 @@ EPAair_03_NC2019_selected <- select(EPAair_03_NC2019, Date, DAILY_AQI_VALUE, Sit
 EPAair_PM25_NC2018_selected <- select(EPAair_PM25_NC2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 EPAair_PM25_NC2019_selected <- select(EPAair_PM25_NC2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
-#5
+#5 Fill with PM2.5
+EPAair_PM25_NC2018_selected$AQS_PARAMETER_DESC = "PM2.5"
+view(EPAair_PM25_NC2018_selected)
+EPAair_PM25_NC2019_selected$AQS_PARAMETER_DESC = "PM2.5"
+view(EPAair_PM25_NC2019_selected)
 
-#6
-
+#6 Save as processed data
+write.csv(EPAair_03_NC2018_selected, row.names = FALSE, file = "./Data/Processed/EPAair_03_NC2018_processed.csv")
+write.csv(EPAair_03_NC2019_selected, row.names = FALSE, file = "./Data/Processed/EPAair_03_NC2019_processed.csv")
+write.csv(EPAair_PM25_NC2018_selected, row.names = FALSE, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv")
+write.csv(EPAair_PM25_NC2019_selected, row.names = FALSE, file = "./Data/Processed/EPAair_PM25_NC2019_processed.csv")
 ```
 
 
@@ -103,16 +112,34 @@ EPAair_PM25_NC2019_selected <- select(EPAair_PM25_NC2019, Date, DAILY_AQI_VALUE,
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC2122_Processed.csv"
 
 ```{r}
-#7
+#7 Combine all 4 datasets with rbind
+EPAair_03_PM25_NC2018_NC2019_combined <- rbind(EPAair_03_NC2018_selected,
+                                               EPAair_03_NC2019_selected,
+                                               EPAair_PM25_NC2018_selected,
+                                               EPAair_PM25_NC2019_selected)
+dim(EPAair_03_PM25_NC2018_NC2019_combined)
 
-#8
+#8 Wranglin' with the pipes
+# Sounds like something a cowboy plumber would say
+EPAair_03_PM25_NC2018_NC2019_combined_filtered <- EPAair_03_PM25_NC2018_NC2019_combined %>%
+  filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarise(meanAQI = mean(DAILY_AQI_VALUE),
+            meanlat = mean(SITE_LATITUDE),
+            meanlong = mean(SITE_LONGITUDE)) %>%
+  mutate(Month = month(Date),
+         Year = year(Date))
+dim(EPAair_03_PM25_NC2018_NC2019_combined_filtered)
 
-#9
+#9 Spread the AQI data 
+EPAair_03_PM25_NC2018_NC2019_combined_spread <- pivot_wider(EPAair_03_PM25_NC2018_NC2019_combined_filtered, names_from = AQS_PARAMETER_DESC, values_from = meanAQI)
 
-#10
+#10 Dimensions
+dim(EPAair_03_PM25_NC2018_NC2019_combined_spread)
 
-#11
-
+#11 Save as processed
+write.csv(EPAair_03_PM25_NC2018_NC2019_combined_spread, row.names = FALSE, file = "./Data/Processed/EPAair_03_PM25_NC2122_Processed.csv")
+#why is this named NC2122 not NC1819 if we're working with 2018 and 2019 data?
 ```
 
 
