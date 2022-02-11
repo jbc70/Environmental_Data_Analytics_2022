@@ -134,12 +134,24 @@ TN in Paul Lake holds steady, with limited variability through the summer, where
 7. [Niwot Ridge] Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
 
 ```{r}
-#6 
+#6 Plotting Needles
+needle_plot <- ggplot(subset(Niwot.litter.processed, functionalGroup == "Needles"),
+                      aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+  geom_point(alpha = 0.75) +
+  scale_color_viridis_d() +
+  labs(x = "Date Collected", y = "Mass (g)", color = "NLCD Class")
+print(needle_plot)
 
-#7
-
+#7 Separate the NLCD classes into facets
+needle_plot_faceted <- ggplot(subset(Niwot.litter.processed, functionalGroup = "Needles"),
+                              aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+  geom_point() +
+  scale_color_viridis_d() +
+  facet_wrap(vars(nlcdClass)) +
+  labs(x = "Date Collected", y = "Mass (g)")
+needle_plot_faceted + guides(color = "none")
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer: It depends on the focus of the viewer. In the non-faceted plot, its easier to compare between classes over time because the points are all overlaid on one another and an overall pattern may be easier to discern. In the faceted plot, its easier to look at each class separately and look for patterns within each class. They are both effective, it just depends on what "level of zoom" the viewer is looking for. 
