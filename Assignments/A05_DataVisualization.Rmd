@@ -38,16 +38,23 @@ getwd()
 library(tidyverse)
 library(cowplot)
 
-PeterPaul.nutrients.chem.phys.processed <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
-Niwot.litter.processed <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+PeterPaul.nutrients.chem.phys.processed <- read.csv(
+  "./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", 
+  stringsAsFactors = TRUE)
+Niwot.litter.processed <- read.csv(
+  "./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", 
+  stringsAsFactors = TRUE)
 
 #2 Make sure dates are dates
 class(PeterPaul.nutrients.chem.phys.processed$sampledate)
-PeterPaul.nutrients.chem.phys.processed$sampledate <- as.Date(PeterPaul.nutrients.chem.phys.processed$sampledate, format = "%Y-%m-%d")
+PeterPaul.nutrients.chem.phys.processed$sampledate <-
+  as.Date(PeterPaul.nutrients.chem.phys.processed$sampledate,
+        format = "%Y-%m-%d")
 class(PeterPaul.nutrients.chem.phys.processed$sampledate)
 
 class(Niwot.litter.processed$collectDate)
-Niwot.litter.processed$collectDate <- as.Date(Niwot.litter.processed$collectDate, format = "%Y-%m-%d")
+Niwot.litter.processed$collectDate <- 
+  as.Date(Niwot.litter.processed$collectDate, format = "%Y-%m-%d")
 class(Niwot.litter.processed$collectDate)
 
 ```
@@ -73,7 +80,8 @@ phosphorus.plot <- ggplot(PeterPaul.nutrients.chem.phys.processed,
   geom_smooth(method = lm, color = "black") +
   xlim(0,60) +
   ylim(0,175) +
-  labs(x = "Phosphate (po4)", y = "Total Phosphorus (tp_ug)", color = "Lake Name")
+  labs(x = "Phosphate (po4)", y = "Total Phosphorus (tp_ug)", 
+       color = "Lake Name")
 print(phosphorus.plot)
 
 ```
@@ -85,7 +93,7 @@ print(phosphorus.plot)
 #5 Boxplots
 # a) Temperature
 temp_plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, 
-                    aes(x = as.factor(month), y = temperature_C, color = lakename)) +
+              aes(x = as.factor(month), y = temperature_C, color = lakename)) +
   geom_boxplot() +
   labs(x = "Month", y = expression("Temperature (*C)", color = "Lake Name"))
 print(temp_plot)
@@ -113,8 +121,8 @@ combined_plot <- plot_grid(
   nrow  = 1,
   hjust = -1)
 legend <- get_legend(temp_plot + 
-                       guides(color = guide_legend(nrow = 1)) +
-                       theme(legend.position = "bottom"))
+                    guides(color = guide_legend(nrow = 1)) +
+                    theme(legend.position = "bottom"))
 combined_plot_legend <- plot_grid(
   combined_plot,
   legend,
@@ -139,7 +147,8 @@ TN in Paul Lake holds steady, with limited variability through the summer, where
 
 ```{r}
 #6 Plotting Needles
-needle_plot <- ggplot(subset(Niwot.litter.processed, functionalGroup == "Needles"),
+needle_plot <- ggplot(subset(Niwot.litter.processed, 
+                             functionalGroup == "Needles"),
                       aes(x = collectDate, y = dryMass, color = nlcdClass)) +
   geom_point(alpha = 0.75) +
   scale_color_viridis_d() +
@@ -147,8 +156,9 @@ needle_plot <- ggplot(subset(Niwot.litter.processed, functionalGroup == "Needles
 print(needle_plot)
 
 #7 Separate the NLCD classes into facets
-needle_plot_faceted <- ggplot(subset(Niwot.litter.processed, functionalGroup = "Needles"),
-                              aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+needle_plot_faceted <- ggplot(subset(Niwot.litter.processed, 
+                                     functionalGroup = "Needles"),
+                        aes(x = collectDate, y = dryMass, color = nlcdClass)) +
   geom_point() +
   scale_color_viridis_d() +
   facet_wrap(vars(nlcdClass)) +
