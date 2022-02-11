@@ -110,8 +110,11 @@ combined_plot <- plot_grid(
   TP_plot + theme(legend.position = "none"),
   TN_plot + theme(legend.position = "none"),
   align = "vh",
-  nrow  = 1)
-legend <- get_legend(temp_plot)
+  nrow  = 1,
+  hjust = -1)
+legend <- get_legend(temp_plot + 
+                       guides(color = guide_legend(nrow = 1)) +
+                       theme(legend.position = "bottom"))
 combined_plot_legend <- plot_grid(
   combined_plot,
   legend,
@@ -120,6 +123,7 @@ combined_plot_legend <- plot_grid(
 
 print(combined_plot_legend)
 # zoom to see whole plot - too big for the little plot window
+# how do I get the legend to be horizontal?
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
