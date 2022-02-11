@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Jack Carpenter"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -32,16 +32,31 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 2. Make sure R is reading dates as date format; if not change the format to date.
 
 ```{r}
-#1 
+#1 session setup
+getwd()
 
-#2 
+library(tidyverse)
+library(cowplot)
+
+PeterPaul.nutrients.chem.phys.processed <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+Niwot.litter.processed <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+
+#2 Make sure dates are dates
+class(PeterPaul.nutrients.chem.phys.processed$sampledate)
+PeterPaul.nutrients.chem.phys.processed$sampledate <- as.Date(PeterPaul.nutrients.chem.phys.processed$sampledate, format = "%Y-%m-%d")
+class(PeterPaul.nutrients.chem.phys.processed$sampledate)
+
+class(Niwot.litter.processed$collectDate)
+Niwot.litter.processed$collectDate <- as.Date(Niwot.litter.processed$collectDate, format = "%Y-%m-%d")
+class(Niwot.litter.processed$collectDate)
 
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
 
 ```{r}
-#3
+#3 set theme
+theme_set(theme_classic())
 
 ```
 
@@ -51,28 +66,75 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 4. [NTL-LTER] Plot total phosphorus (`tp_ug`) by phosphate (`po4`), with separate aesthetics for Peter and Paul lakes. Add a line of best fit and color it black. Adjust your axes to hide extreme values (hint: change the limits using `xlim()` and `ylim()`).
 
 ```{r}
-#4
-
+#4 Phosphorus by lake
+phosphorus.plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, aes(x = po4, y = tp_ug, color = lakename)) +
+  geom_point(alpha = 0.8) +
+  geom_smooth(method = lm, color = "black") +
+  facet_wrap(vars(lakename)) +
+  xlim(0,60) +
+  ylim(0,175) +
+  labs(x = "Phosphate (po4)", y = "Total Phosphorus (tp_ug)", color = "Lake Name")
+  
+print(phosphorus.plot)
 ```
 
 
 5. [NTL-LTER] Make three separate boxplots of (a) temperature, (b) TP, and (c) TN, with month as the x axis and lake as a color aesthetic. Then, create a cowplot that combines the three graphs. Make sure that only one legend is present and that graph axes are aligned.
 
 ```{r}
-#5
+#5 Boxplots
+# a) Temperature
+temp_plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, 
+                    aes(x = as.factor(month), y = temperature_C, color = lakename)) +
+  geom_boxplot() +
+  labs(x = "Month", y = expression("Temperature (*C)", color = "Lake Name"))
+print(temp_plot)
 
+# b) TP
+TP_plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, 
+                  aes(x = as.factor(month), y = tp_ug, color = lakename)) + 
+  geom_boxplot() +
+  labs(x = "Month", y = "TP (ug)", color = "Lake Name")
+print(TP_plot)
+
+# c) TN
+TN_plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, 
+                  aes(x = as.factor(month), y = tn_ug, color = lakename)) +
+  geom_boxplot() +
+  labs(x = "Month", y = "TN (ug)", color = "Lake Name")
+print(TN_plot)
+
+# cowplot combining all three
+combined_plot <- plot_grid(
+  temp_plot + theme(legend.position = "none"),
+  TP_plot + theme(legend.position = "none"),
+  TN_plot + theme(legend.position = "none"),
+  align = "vh",
+  nrow  = 1)
+legend <- get_legend(temp_plot)
+combined_plot_legend <- plot_grid(
+  combined_plot,
+  legend,
+  nrow = 2,
+  rel_heights = c(3, 0.4))
+
+print(combined_plot_legend)
+# zoom to see whole plot - too big for the little plot window
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
 > Answer: 
+Temperature follows exactly the pattern expected, increasing in summer, decreasing in fall. Interestingly, it seems as though Peter Lake is slightly behind Paul Lake, warming later then cooling later. 
+TP in Paul Lake slightly decreases in the summer then increasing in Fall, with more variability in the spring and Fall. Peter Lake shows an increase in both TP and variability in TP through the course of the summer into the Fall.
+TN in Paul Lake holds steady, with limited variability through the summer, where in Peter Lake it increases in amount and variability through the summer befor decreasing again in September.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
 7. [Niwot Ridge] Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
 
 ```{r}
-#6
+#6 
 
 #7
 
