@@ -67,15 +67,16 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #4 Phosphorus by lake
-phosphorus.plot <- ggplot(PeterPaul.nutrients.chem.phys.processed, aes(x = po4, y = tp_ug, color = lakename)) +
-  geom_point(alpha = 0.8) +
+phosphorus.plot <- ggplot(PeterPaul.nutrients.chem.phys.processed) +
+                          #aes(x = po4, y = tp_ug, color = lakename)) +
+  geom_point(subset(lakename == "Peter Lake", aes(x = po4, y = tp_ug))) +
+  geom_point(subset(lakename == "Paul Lake", aes(x = po4, y = tp_ug))) +
   geom_smooth(method = lm, color = "black") +
-  facet_wrap(vars(lakename)) +
   xlim(0,60) +
   ylim(0,175) +
   labs(x = "Phosphate (po4)", y = "Total Phosphorus (tp_ug)", color = "Lake Name")
-  
 print(phosphorus.plot)
+
 ```
 
 
