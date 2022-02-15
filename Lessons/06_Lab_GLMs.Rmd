@@ -67,13 +67,19 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 > Exercise 1: State the hypotheses for testing mean of AQI index.
 
 > Answer: 
+Null hypothesis: Difference bt sample mean and value is zero
+Alternative: Difference bt sample mean and value is < 50 
 
 
 ```{r}
-
+#general workflow:
+#1 scatterplot - view the data
+#2 create linear model - bestfit , assumes normal residuals, assumes causation
+#3 examine model summary & plots
 
 summary(EPAair$Ozone)
 EPAair.subsample <- sample_n(EPAair, 5000)
+#shapiro test doesn't like to run more than 5000 samples so we reduce it
 
 # Evaluate assumption of normal distribution
 shapiro.test((EPAair.subsample$Ozone))
