@@ -40,6 +40,13 @@ vignettes/*.pdf
 
 # Rproject files
 *.Rproj
+<<<<<<< HEAD
 
 #DS_Store
 **/.DS_Store
+=======
+*_KEY.Rmd
+
+#Mac files
+.DS_Store
+>>>>>>> 72ec65b1e12c2534c82aa2ec6af3c9b999b7ca57
