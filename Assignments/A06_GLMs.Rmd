@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Student Name"
+author: "Jack Carpenter"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -27,10 +27,22 @@ The completed exercise is due on Monday, February 28 at 7:00 pm.
 
 ```{r setup}
 #1
+getwd()
 
+library(tidyverse)
+library(lubridate)
+library(agricolae)
+library(corrplot)
+
+NTL_LTER_Lake_chemphys <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+
+NTL_LTER_Lake_chemphys$sampledate <- as.Date(NTL_LTER_Lake_chemphys$sampledate,
+                                             format = "%m/%d/%y")
 
 #2
-
+theme_set(theme_classic(base_size = 10) +
+          theme(axis.text = element_text(color = "black"),
+                legend.position = "none"))
 
 ```
 
@@ -39,8 +51,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: Mean temperature does not change with depth across all lakes in July.
+Ha: Mean temperature changes with depth across all lakes in July.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -52,10 +64,22 @@ Ha:
 
 ```{r scatterplot}
 #4
-
+July_data <- NTL_LTER_Lake_chemphys %>%
+  mutate(Month = month(sampledate)) %>%
+  filter(Month == "6") %>%
+  select(lakename, year4, daynum, depth, temperature_C) %>%
+  na.omit()
 
 #5
-
+Julyplot <- ggplot(July_data, 
+                   aes(x = temperature_C, y = depth, color = lakename)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = TRUE, color = "black") +
+  ylim(0,35) +
+  scale_color_viridis_d() +
+  #facet_wrap(vars(lakename)) +
+  labs(x = "Depth (m)", y = expression("Temperature (*C)"))
+Julyplot
 
 ```
 
