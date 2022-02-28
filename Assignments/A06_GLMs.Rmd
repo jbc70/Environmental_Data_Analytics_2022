@@ -66,7 +66,7 @@ Ha: Mean temperature changes with depth across all lakes in July.
 #4
 July_data <- NTL_LTER_Lake_chemphys %>%
   mutate(Month = month(sampledate)) %>%
-  filter(Month == "6") %>%
+  filter(Month == "7") %>%
   select(lakename, year4, daynum, depth, temperature_C) %>%
   na.omit()
 
@@ -96,14 +96,14 @@ Julyplot
 July_lm <- lm(July_data$temperature_C ~ July_data$depth)
 summary(July_lm)
 #p-value = 2.2e-16
-#r-squared = 0.6942
-#df = 9501
+#r-squared = 0.7387
+#df = 9726
 
 ```
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer: 69% of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.69 output by the model. The degrees of freedom is high at 9501, indicating that sample size is not an issue. The small p-value indicates that the null, that mean temp does not change with depth, is very very unlikely to be due to chance, and that depth and temperature are significantly correlated. For every meter change in depth, temperature change is predicted to be 1.6 degrees Celsius.
+> Answer: 74% of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.74 output by the model. The degrees of freedom is high at 9726, indicating that sample size is not an issue. The small p-value indicates that the null, that mean temp does not change with depth, is very very unlikely to be due to chance, and that depth and temperature are significantly correlated. For every meter change in depth, temperature change is predicted to be 1.9 degrees Celsius.
 
 ---
 
@@ -131,7 +131,7 @@ summary(July_AIC)
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: The model suggests to use all three variables: depth, year4, and daynum. Year4 surprised me, but I guess that annual variability is just significant enough to matter. This model with multiple variables explains 70%, which is juuuuuust a smidge higher than the 69% explained by depth. While it does improve over the model using only depth, it is just barely so. 
+> Answer: The model suggests to use all three variables: depth, year4, and daynum. Year4 surprised me, but I guess that annual variability is just significant enough to matter. This model with multiple variables explains 74.11%, which is juuuuuust a smidge higher than the 73.87% explained by depth. While it does improve over the model using only depth, it is just barely so. 
 
 ---
 ## Analysis of Variance
