@@ -78,10 +78,10 @@ Julyplot <- ggplot(July_data,
   xlim(0,35) +
   scale_y_reverse() +
   scale_color_viridis_d() +
-  #facet_wrap(vars(lakename)) +
   labs(x = expression("Temperature (*C)", y = "Depth (m)"))
 Julyplot
 
+# I know temperature by depth means temperature on the y, depth on the x, but plotting by depth typically makes more sense to have depth on the Y and reversed, so that's what I've done. 
 ```
 
 
@@ -93,18 +93,17 @@ Julyplot
 
 ```{r linear.regression}
 #7
-July_lm <- lm(July_data$depth ~ July_data$temperature_C)
+July_lm <- lm(July_data$temperature_C ~ July_data$depth)
 summary(July_lm)
 #p-value = 2.2e-16
 #r-squared = 0.6942
+#df = 9501
 
 ```
 
-
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer: A significant portion of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.69 output by the model. The degrees of freedom is high at 9501, indicating that sample size is not an issue with the veracity of the results. 
-
+> Answer: A significant portion of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.69 output by the model. The degrees of freedom is high at 9501, indicating that sample size is not an issue. The small p-value indicates that the null, that mean temp does not change with depth, is very very unlikely to be due to chance, and that depth and temperature are significantly correlated. For every meter change in depth, temperature change is predicted to be 1.6 degrees Celsius.
 
 ---
 
@@ -117,20 +116,22 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 10. Run a multiple regression on the recommended set of variables. 
 
 ```{r temperature.model}
-#9
+#9 Create AIC and run step test
+July_AIC <- lm(data = July_data, temperature_C ~ depth + year4 + daynum)
+step(July_AIC)
+# all variables above the AIC value - so keep all of them I guess
+# seems weird that year4 somehow is valuable here
 
-
-
-#10
+#10 
+# Since all variables passed the AIC, we can just run the same function
+summary(July_AIC)
 
 
 ```
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: 
-
-
+> Answer: The model suggests to use all three variables: depth, year4, and daynum. Year4 surprised me, but I guess that annual variability is just significant enough to matter. This model with multiple variables explains 70%, which is juuuuuust a smidge higher than the 69% explained by depth. While it does improve over the model using only depth, it is just barely so. 
 
 ---
 ## Analysis of Variance
@@ -139,40 +140,58 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r anova.model}
 #12
+# let's see all the lake names
+summary(July_data$lakename)
 
+# first an anova test
+July_data_anova <- aov(data = July_data, temperature_C ~ lakename)
+summary(July_data_anova)
+# same test formatted as linear model
+July_data_anova2 <- lm(data = July_data, temperature_C ~ lakename)
+summary(July_data_anova2)
+#plot(July_data_anova2)
 
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
-
-
+> Answer: Yes, there is a significant difference in mean temperature. The p-values between lakes are all below 0.05, p < 2.2e-16 for the whole group, indicating we reject the null that there is no significant difference in mean temperature among lakes. 
 
 14. Create a graph that depicts temperature by depth, with a separate color for each lake. Add a geom_smooth (method = "lm", se = FALSE) for each lake. Make your points 50 % transparent. Adjust your y axis limits to go from 0 to 35 degrees. Clean up your graph to make it pretty. 
 
 ```{r scatterplot.2}
 #14.
-
-
+July_plot_lm <- ggplot(July_data, 
+                       aes(x = temperature_C, y = depth, color = lakename)) +
+  geom_point(alpha = 0.5) +
+  scale_y_reverse() +
+  xlim(0,35) +
+  scale_colour_viridis_d() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Temperature (*C)", y = "Depth", color = "Lake Name")
+July_plot_lm
+#tried it the other way, I really prefer the depth on the y-axis
 ```
 
 15. Use the Tukey's HSD test to determine which lakes have different means.
 
 ```{r tukey.test}
 #15
+TukeyHSD(July_data_anova)
 
-
+# now we group them
+July_data_groups <- HSD.test(July_data_anova, "lakename", group = TRUE)
+July_data_groups
 ```
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
 
->Answer:
+>Answer: According to the groupings, Peter Lake has the same mean temperature as Paul Lake, statistically. Central Long Lake is the only one that is completely distinct from all the others, statistically. 
 
  
 
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
->Answer: 
+>Answer: Just looking at Peter and Paul, we could run a two-sample t-test to see if their means are distinct. Null hypthesis is that they are equivalent, and alternative is that they are not. 
 
 
