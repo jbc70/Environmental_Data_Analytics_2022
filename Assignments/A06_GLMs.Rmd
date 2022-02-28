@@ -103,7 +103,7 @@ summary(July_lm)
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer: A significant portion of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.69 output by the model. The degrees of freedom is high at 9501, indicating that sample size is not an issue. The small p-value indicates that the null, that mean temp does not change with depth, is very very unlikely to be due to chance, and that depth and temperature are significantly correlated. For every meter change in depth, temperature change is predicted to be 1.6 degrees Celsius.
+> Answer: 69% of the variability in temperature is explained by depth, as indicated by the r^2 value of 0.69 output by the model. The degrees of freedom is high at 9501, indicating that sample size is not an issue. The small p-value indicates that the null, that mean temp does not change with depth, is very very unlikely to be due to chance, and that depth and temperature are significantly correlated. For every meter change in depth, temperature change is predicted to be 1.6 degrees Celsius.
 
 ---
 
@@ -171,6 +171,7 @@ July_plot_lm <- ggplot(July_data,
   labs(x = "Temperature (*C)", y = "Depth", color = "Lake Name")
 July_plot_lm
 #tried it the other way, I really prefer the depth on the y-axis
+# it just looks right to me that way
 ```
 
 15. Use the Tukey's HSD test to determine which lakes have different means.
