@@ -103,7 +103,7 @@ class(GaringerOzone$Date)
 # 4 Data Cowboy time
 GaringerO3 <- GaringerOzone %>%
   select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
-GaringerO3
+dim(GaringerO3)
 
 # 5 Daily Dataframe
 Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), by = 1))
@@ -229,7 +229,7 @@ ggplot(GaringerOzone.monthly, aes(x = Month_Year, y = mean_Ozone))+
 
 ```{r}
 #15 Get rid of the seasons (aka Florida-ization)
-GaringerOzone.monthly.decomp
+#GaringerOzone.monthly.decomp
 GaringerOzone.monthly.components <-
   as.data.frame(GaringerOzone.monthly.decomp$time.series[,2:3])
 
