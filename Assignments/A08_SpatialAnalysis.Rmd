@@ -1,11 +1,13 @@
 ---
-title: "Assignment 9: Spatial Analysis in R"
+title: 'Assignment 9: Spatial Analysis in R'
 author: "Jack Carpenter"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 geometry: margin=2.54cm
-editor_options: 
+editor_options:
   chunk_output_type: console
-  markdown: 
+  markdown:
     wrap: 72
 ---
 
@@ -82,7 +84,7 @@ Next we'll read in some USGS/NWIS gauge location data added to the `Data/Raw` fo
 
 ```{r Read in USGS Gage Locations}
 #7. Read in gage locations csv as a dataframe
-NE_USGSgauge_locs <- read.csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv")
+NE_USGSgauge_locs <- read.csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv", stringsAsFactors = FALSE)
 
 #8. Reveal the names of the columns
 colnames(NE_USGSgauge_locs)
@@ -151,19 +153,29 @@ Lastly, we want to attach some gage height data to our site locations. I've cons
 
 ```{r}
 #14. Read the site flow data into a data frame
-
+siteflow_data <- read_csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv")
 
 #15. Show the column names
-
+colnames(siteflow_data)
 
 #16. Join location data to it
+class(NE_USGSgaugelocs_sf$site_no)
+class(siteflow_data$site_no)
 
+NE_USGSgaugelocs_sf$site_no <- as.character(NE_USGSgaugelocs_sf$site_no)
+class(NE_USGSgaugelocs_sf$site_no)
+
+NE_USGSgauge_sf_joined <- merge(x = NE_USGSgaugelocs_sf,
+                     y = siteflow_data,
+                     by.x = "station_nm",
+                     by.y = "station_nm")
+                         
 
 #17. Show the column names of the joined dataset
-
+colnames(NE_USGSgauge_sf_joined)
 
 #18. Show the dimensions of this joined dataset
-
+dim(NE_USGSgauge_sf_joined)
 
 ```
 
@@ -175,10 +187,14 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #Map the points, sized by gage height
-
+mapview(counties_sf) + 
+  mapview(NE_USGSgauge_sf_joined, zcol = "gage_ht")
+  
 
 #ggplot
-
+ggplot() +
+  geom_sf(data = counties_sf, fill = "orange") +
+  geom_sf(data = NE_USGSgauge_sf_joined, color = "blue")
 
 ```
 
@@ -196,10 +212,12 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 
 ```{r}
 #20 Transform the counties and gage location datasets to UTM Zone 14
-
+counties_sf.utm14 <- st_transform(counties_sf, 32614)
+NE_USGSgauge_sf.utm14 <- st_transform(NE_USGSgauge_sf_joined, 32614)
 
 #21 Plot the data
-
+mapview(counties_sf.utm14) +
+  mapview(NE_USGSgauge_sf.utm14, zcol = "gage_ht")
 
 ```
 
@@ -217,13 +235,17 @@ Now let's zoom into a particular county and examine the gages located there.
 
 ```{r}
 #22 Select the county
+Lancastercty <- counties_sf.utm14 %>%
+  filter(NAME == "Lancaster")
 
 
 #23 Select gages within the selected county
-
+Lancastergauges <- NE_USGSgauge_sf.utm14[Lancastercty,]
 
 #24 Plot
-
+mapview(counties_sf) +
+  mapview(Lancastercty, col.regions = "red") +
+  mapview(Lancastergauges, zcol = "gage_ht")
 
 
 ```
