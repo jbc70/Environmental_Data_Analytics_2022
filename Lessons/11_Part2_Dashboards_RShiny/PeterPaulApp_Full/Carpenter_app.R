@@ -1,6 +1,6 @@
 #### Load packages ----
 library(shiny)
-library(shinythemes)
+library(shinythemes) 
 library(tidyverse)
 
 #### Load data ----
@@ -11,7 +11,7 @@ nutrient_data <- nutrient_data %>%
   select(lakename, sampledate:po4)
 
 #### Define UI ----
-ui <- fluidPage(theme = shinytheme("yeti"),
+ui <- fluidPage(theme = shinytheme("cerulean"),
   titlePanel("Nutrients in Peter Lake and Paul Lake"),
   sidebarLayout(
     sidebarPanel(
@@ -20,7 +20,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
       selectInput(inputId = "y", 
                   label = "Nutrient",
                   choices = c("tn_ug", "tp_ug", "nh34", "no23", "po4"), 
-                  selected = "tp_ug"),
+                  selected = "nh34"),
       
       # Select depth
       checkboxGroupInput(inputId = "fill",
@@ -67,7 +67,7 @@ server <- function(input, output) {
           theme_classic(base_size = 14) +
           scale_shape_manual(values = c(21, 24)) +
           labs(x = "Date", y = expression(Concentration ~ (mu*g / L)), shape = "Lake", fill = "Depth ID") +
-          scale_fill_distiller(palette = "YlOrBr", guide = "colorbar", direction = 1)
+          scale_fill_distiller(palette = "PuBuGn", guide = "colorbar", direction = 1)
           #scale_fill_viridis_c(option = "viridis", begin = 0, end = 0.8, direction = -1)
       })
        

@@ -4,7 +4,8 @@ author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kate
 date: "Spring 2022"
 output:
  pdf_document: default
-
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## LESSON OBJECTIVES
@@ -63,12 +64,29 @@ See: <https://rmarkdown.rstudio.com> and class recording.
 
 ## WHY R MARKDOWN?
 
-<Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).> 
+<Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).>  
 
+ * R markdown is *highly* flexible with multiple output formats
+ * R markdown works with **multiple languages**
+ * R markdown allows for *customization* of code and outputs
+ * Relatively shallow learning curve - even I could do it!
 
 ## TEXT EDITING CHALLENGE
 
 Create a table below that details the example datasets we have been using in class. The first column should contain the names of the datasets and the second column should include some relevant information about the datasets. (Hint: use the cheat sheets to figure out how to make a table in Rmd)
+
+Table: Datasets used in this class.
+--------------------------------------------------------------------------------
+ Dataset Name       |  Content of dataset
+--------------      | --------------------
+NIWO Litter         | Data of litter weight and location from a 
+                    |     Rocky Mountain forest  
+                    |
+NTL-LTER Lake Data  | Physical or chemical data for a series of lakes 
+                    |     in the Upper Midwest  
+                    |
+EPA Ozone Data      | Air quality data for 2018 and '19 at multiple sites in NC
+--------------------------------------------------------------------------------
 
 
 ## R CHUNK EDITING CHALLENGE
@@ -76,7 +94,9 @@ Create a table below that details the example datasets we have been using in cla
 ### Installing packages
 
 Create an R chunk below that installs the package `knitr`. Instead of commenting out the code, customize the chunk options such that the code is not evaluated (i.e., not run).
-
+```{r install.packages, eval = FALSE}
+install.packages("knitr")
+```
 
 ### Setup
 
@@ -85,7 +105,25 @@ Create an R chunk below called "setup" that checks your working directory, loads
 Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, and set the date column to a date format.
 
 Customize the chunk options such that the code is run but is not displayed in the final document.
+```{r Setup, include=FALSE, message=FALSE}
+getwd()
 
+library(tidyverse)
+library(lubridate)
+library(knitr)
+
+theme_set(theme_classic() +
+  theme(axis.text = element_text(color = "black", size = 10), 
+        legend.position = "right"))
+
+Lake_nutrients_raw <- read.csv("./Data/Raw/NTL-LTER_Lake_Nutrients_Raw.csv", 
+                               stringsAsFactors = TRUE)
+head(Lake_nutrients_raw)
+class(Lake_nutrients_raw$sampledate) #what is it now
+Lake_nutrients_raw$sampledate <- as.Date(Lake_nutrients_raw$sampledate,
+                                         format = "%m/%d/%y")
+class(Lake_nutrients_raw$sampledate) #did the date change work
+```
 
 ### Data Exploration, Wrangling, and Visualization
 
@@ -94,18 +132,68 @@ Create an R chunk below to create a processed dataset do the following operation
 -   Include all columns except lakeid, depth_id, and comments
 -   Include only surface samples (depth = 0 m)
 -   Drop rows with missing data
-
+```{r initial wrangling}
+Lake_nutrients_processed <- Lake_nutrients_raw %>%
+  select(-c(lakeid, depth_id, comments)) %>% #choose our columns
+  filter(depth == 0) %>%
+  drop_na() #remove NAs
+```
 Create a second R chunk to create a summary dataset with the mean, minimum, maximum, and standard deviation of total nitrogen concentrations for each lake. Create a second summary dataset that is identical except that it evaluates total phosphorus. Customize the chunk options such that the code is run but not displayed in the final document.
+```{r secondary wrangling, echo=FALSE}
+Lake_nutrients_nitrogen <- Lake_nutrients_processed %>%
+  group_by(lakename) %>%
+  summarize(Mean_N = mean(tn_ug),
+            Min_N = min(tn_ug),
+            Max_N = max(tn_ug),
+            StDev_N = sd(tn_ug))
+Lake_nutrients_phosphorus <- Lake_nutrients_processed %>%
+  group_by(lakename) %>%
+  summarize(Mean_P = mean(tp_ug),
+            Min_P = min(tp_ug),
+            Max_P = max(tp_ug),
+            StDev_P = sd(tp_ug))
+```
 
 Create a third R chunk that uses the function `kable` in the knitr package to display two tables: one for the summary dataframe for total N and one for the summary dataframe of total P. Use the `caption = " "` code within that function to title your tables. Customize the chunk options such that the final table is displayed but not the code used to generate the table.
+```{r every Kable has a Deadpool, echo = FALSE}
+kable(Lake_nutrients_nitrogen,
+                 caption = "Nitrogen Summary by Lake") #nitrogen table
+
+kable(Lake_nutrients_phosphorus,
+                 caption = "Phosphorus Summary by Lake") #phosphorus table
+```
 
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
-
-
+```{r,Nitrogen Plot,echo=FALSE,fig.align='left',fig.cap="Total Nitrogen"}
+ggplot(Lake_nutrients_processed, 
+       aes(x = sampledate, y = tn_ug, color = lakename)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_color_viridis_d() +
+  labs(x = "Date", 
+       y = expression("Total Nitrogen "*mu*"g"), 
+       color = "Lake Name",
+       title = "Total N in the '90s")
+```
+```{r,Phosphorus Plot,echo=FALSE,fig.align='left',fig.cap='Total Phosphorus'}
+ggplot(Lake_nutrients_processed,
+       aes(x = sampledate, y = tp_ug, color = lakename)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_color_viridis_d() +
+  labs(x = "Date", 
+       y = expression("Total Phosphorus "*mu*"g"),
+       color = "Lake Name",
+       title = "Total P in the '90s")
+```
+\newpage
 ### Communicating results
 
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
 
+The lakes in the NTL-LTER study display shifts in nutrient availability over time, specifically in the amounts of nitrogen and phosphorus present. Total nitrogen amounts have remained relatively the same in Tuesday and Paul Lakes between 1990 and 2000. The other lakes all saw an increase in Nitrogen availabilty through 1997, and then a rapid decrease up to 2000, especially in West Long, East Long, and Peter Lakes. A similar pattern can be observed with total phosphorus availability, with a general increase up to 1997 in some lakes followed by a decrease, while other lakes exhibited little change. 
+-------------------------------------------------------------------------------
+To follow up on these initial findings, several analyses can be done to further parse out the scale, severity, and reason behind the patterns seen in this data. Initially, an analysis of each lake's change in nutrient concentrations relative to its starting point would answer the questions of scale and severity in the change in nutrient amounts in the lakes. The next would be to look at other aspects of the lakes during this time frame to attempt to determine maybe what caused this shift and what was subsequently done to remedy the increase back to lower levels of nutrients. Conditions such as temperature and turbidity could be examined as well as historical records of land use nearby or directly upstream would potentially yield answers as to where these nutrients came from and why they affected some, but not all of the lakes in the study.
 
 ## KNIT YOUR PDF
 When you have completed the above steps, try knitting your PDF to see if all of the formatting options you specified turned out as planned. This may take some troubleshooting.
